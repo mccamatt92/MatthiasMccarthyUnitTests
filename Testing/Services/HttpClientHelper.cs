@@ -12,4 +12,6 @@ public static class HttpClientHelper
     });
 
     public static HttpClient Client => _httpClient.Value;
+
+
 }

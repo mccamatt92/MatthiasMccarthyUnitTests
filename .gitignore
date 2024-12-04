@@ -129,3 +129,6 @@ dist
 .yarn/install-state.gz
 .pnp.*
 /Testing/Testing/obj
+/Testing/Services/bin/
+/Testing/Services/obj/Debug/
+/Testing/Services/obj/
