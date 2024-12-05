@@ -2,11 +2,11 @@
 
 namespace Services
 {
-    public class ApiServices
+    public class Clients
     {
         private readonly HttpClient _httpClient;
 
-        public ApiServices(HttpClient httpClient)
+        public Clients(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
@@ -16,10 +16,17 @@ namespace Services
             return await _httpClient.GetAsync("/onlinewallet/balance");
         }
 
-        public async Task<HttpResponseMessage> DepositAsync(decimal amount)
+        public async Task<HttpResponseMessage> DepositAsync(string amount)
         {
             var requestContent = new { amount };
             var response = await _httpClient.PostAsJsonAsync("/onlinewallet/deposit", requestContent);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> WithdrawAsync(string amount)
+        {
+            var requestContent = new { amount };
+            var response = await _httpClient.PostAsJsonAsync("/onlinewallet/withdraw", requestContent);
             return response;
         }
     }

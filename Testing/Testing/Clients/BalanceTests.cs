@@ -3,21 +3,21 @@ using Services;
 using System.Net;
 using System.Text.Json;
 
-namespace Testing;
+namespace Testing.Clients;
 
 public class BalanceTests : WalletApiTestBase
 {
-    private readonly ApiServices _walletService;
+    private readonly Clients client;
 
     public BalanceTests()
     {
-        _walletService = new ApiServices(HttpClientHelper.Client);
+        client = new Clients(HttpClientHelper.Client);
     }
 
     [Fact]
     public async Task GetBalance_ShouldReturn200AndBalance_WhenValid()
     {
-        var response = await _walletService.GetBalanceAsync();
+        var response = await client.GetBalanceAsync();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var responseBody = await response.Content.ReadAsStringAsync();
