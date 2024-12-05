@@ -28,11 +28,10 @@ public class ServiceTest
             StatusCode = HttpStatusCode.OK
         });
 
-        // Act
         var balance = await _walletServices.GetBalanceAsync();
 
         // Assert
-        balance.Should().Be(currentBalance);
+        balance.ToString().Should().Be(currentBalance);
         _mockClient.Verify(x => x.GetBalanceAsync(), Times.Once);
     }
 
@@ -63,8 +62,8 @@ public class ServiceTest
         var response = await _walletServices.DepositAsync(topUpAmount);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _mockClient.Verify(x => x.DepositAsync(It.Is<decimal>(d => d == topUpAmount)), Times.Once);
+        _mockClient.Verify(x => x.DepositAsync(It.Is<string>(d => d.Equals(topUpAmount))), Times.Once);
+
     }
 
     [Fact]
@@ -76,7 +75,7 @@ public class ServiceTest
         // Act & Assert
         var ex = await Assert.ThrowsAsync<ArgumentException>(() => _walletServices.DepositAsync(negativeAmount));
         ex.Message.Should().Be("Top-up amount must be positive.");
-        _mockClient.Verify(x => x.DepositAsync(It.IsAny<decimal>()), Times.Never);
+        _mockClient.Verify(x => x.DepositAsync(It.IsAny<string>()), Times.Never);
     }
 
     // --- Withdraw Service Tests ---
@@ -91,7 +90,7 @@ public class ServiceTest
             Content = new StringContent($"{{\"amount\": {currentBalance}}}"),
             StatusCode = HttpStatusCode.OK
         });
-        _mockClient.Setup(x => x.WithdrawAsync(It.IsAny<decimal>())).ReturnsAsync(new HttpResponseMessage
+        _mockClient.Setup(x => x.WithdrawAsync(It.IsAny<string>())).ReturnsAsync(new HttpResponseMessage
         {
             StatusCode = HttpStatusCode.OK
         });
@@ -100,8 +99,7 @@ public class ServiceTest
         var response = await _walletServices.WithdrawAsync(withdrawalAmount);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        _mockClient.Verify(x => x.WithdrawAsync(It.Is<decimal>(w => w == withdrawalAmount)), Times.Once);
+        _mockClient.Verify(x => x.WithdrawAsync(It.Is<string>(w => w.Equals(withdrawalAmount))), Times.Once);
     }
 
     [Fact]
@@ -119,7 +117,7 @@ public class ServiceTest
         // Act & Assert
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => _walletServices.WithdrawAsync(withdrawalAmount));
         ex.Message.Should().Be("Insufficient balance for withdrawal.");
-        _mockClient.Verify(x => x.WithdrawAsync(It.IsAny<decimal>()), Times.Never);
+        _mockClient.Verify(x => x.WithdrawAsync(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
@@ -137,24 +135,27 @@ public class ServiceTest
         // Act & Assert
         var ex = await Assert.ThrowsAsync<ArgumentException>(() => _walletServices.WithdrawAsync(negativeAmount));
         ex.Message.Should().Be("Withdrawal amount must be positive.");
-        _mockClient.Verify(x => x.WithdrawAsync(It.IsAny<decimal>()), Times.Never);
+        _mockClient.Verify(x => x.WithdrawAsync(It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
-    public async Task WithdrawAsync_ShouldNotFailWithZeroAmount()
+    public async Task WithdrawAsync_ShouldNotWithdrawWithZeroAmountAndReturnCurrentBalance()
     {
         // Arrange
         var currentBalance = "200";
-        var withdrawalAmount = "0";
+        var withdrawalAmount = "0"; // Withdrawal amount is zero
+
         _mockClient.Setup(x => x.GetBalanceAsync()).ReturnsAsync(new HttpResponseMessage
         {
             Content = new StringContent($"{{\"amount\": {currentBalance}}}"),
             StatusCode = HttpStatusCode.OK
         });
 
-        // Act & Assert
-        var ex = await Assert.ThrowsAsync<ArgumentException>(() => _walletServices.WithdrawAsync(withdrawalAmount));
-        ex.Message.Should().Be("Withdrawal amount must be greater than zero.");
-        _mockClient.Verify(x => x.WithdrawAsync(It.IsAny<decimal>()), Times.Never);
+        // Act
+        var result = await _walletServices.WithdrawAsync(withdrawalAmount);
+
+        // Assert
+        result.Should().Be(decimal.Parse(currentBalance)); // Ensure the returned amount is the same as the current balance
+        _mockClient.Verify(x => x.WithdrawAsync(It.IsAny<string>()), Times.Never); // Ensure WithdrawAsync was not called
     }
 }

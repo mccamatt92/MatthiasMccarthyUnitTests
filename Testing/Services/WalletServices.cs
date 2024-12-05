@@ -3,25 +3,37 @@
 public class WalletServices : IWalletServices
 {
     private readonly IHttpClients _client;
+    private readonly JsonHelper jsonHelper;
 
     public WalletServices(IHttpClients client)
     {
         _client = client;
+        jsonHelper = new JsonHelper();
     }
 
-    public async Task<HttpResponseMessage> GetBalanceAsync()
+
+    public async Task<decimal> GetBalanceAsync()
     {
-        return await _client.GetBalanceAsync();
+        var response = await _client.GetBalanceAsync();
+        var balance = jsonHelper.JsonBody(await response.Content.ReadAsStringAsync());
 
+        return balance;
     }
 
-    public async Task<HttpResponseMessage> DepositAsync(string amount)
+    public async Task<decimal> DepositAsync(string amount)
     {
-        return await _client.DepositAsync(amount); ;
+        var response = await _client.DepositAsync(amount);
+        var balance = jsonHelper.JsonBody(await response.Content.ReadAsStringAsync());
+
+        return balance;
     }
 
-    public async Task<HttpResponseMessage> WithdrawAsync(string amount)
+    public async Task<decimal> WithdrawAsync(string amount)
     {
-        return await _client.WithdrawAsync(amount);
+        var response = await _client.WithdrawAsync(amount);
+        var balance = jsonHelper.JsonBody(await response.Content.ReadAsStringAsync());
+
+        return balance;
     }
+
 }
