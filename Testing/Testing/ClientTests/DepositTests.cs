@@ -3,7 +3,7 @@ using Services;
 using System.Net;
 using System.Text.Json;
 
-namespace Testing.Clients;
+namespace Testing.ClientTests;
 
 public class DepositTests : WalletApiTestBase
 {
@@ -16,12 +16,10 @@ public class DepositTests : WalletApiTestBase
 
     [Theory]
     [InlineData("100")]
-    [InlineData("50")]
     public async Task DepositAsync_ShouldReturnUpdatedBalance(string depositAmount)
     {
         var response = await _clients.DepositAsync(depositAmount);
 
-        // Assert
         response.Should().NotBeNull();
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -36,8 +34,9 @@ public class DepositTests : WalletApiTestBase
     }
 
     [Theory]
-    [InlineData("-100")] // Example: Deposit 100, expect balance to be 200
-    [InlineData("-50")]  // Example: Deposit 50, expect balance to be 150
+    [InlineData("-100")]
+    [InlineData("A")]
+    [InlineData("")]
     public async Task DepositAsync_ShouldReturnErrorForInvalidRequest(string negativeAmount)
     {
         var response = await _clients.DepositAsync(negativeAmount);

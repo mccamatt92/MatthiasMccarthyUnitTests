@@ -3,7 +3,7 @@ using Services;
 using System.Net;
 using System.Text.Json;
 
-namespace Testing.Clients;
+namespace Testing.ClientTests;
 
 public class BalanceTests : WalletApiTestBase
 {
