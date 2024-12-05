@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Testing.ClientTests;
 
-public class BalanceTests : WalletApiTestBase
+public class BalanceTests
 {
     private IHttpClients client;
 

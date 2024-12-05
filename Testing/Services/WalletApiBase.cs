@@ -1,10 +1,10 @@
 ﻿using Testing;
 
-public class WalletApiTestBase
+public class WalletApiBase
 {
     protected readonly HttpClient _client;
 
-    public WalletApiTestBase()
+    public WalletApiBase()
     {
         // Use the HttpClient from the helper class
         _client = HttpClientHelper.Client;
