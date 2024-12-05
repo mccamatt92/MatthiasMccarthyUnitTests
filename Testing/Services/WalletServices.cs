@@ -2,9 +2,9 @@
 
 public class WalletServices : IWalletServices
 {
-    private readonly Clients _client;
+    private readonly HttpClients _client;
 
-    public WalletServices(Clients client)
+    public WalletServices(HttpClients client)
     {
         _client = client;
     }

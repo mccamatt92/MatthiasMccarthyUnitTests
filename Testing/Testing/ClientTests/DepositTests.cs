@@ -7,11 +7,11 @@ namespace Testing.Clients;
 
 public class DepositTests : WalletApiTestBase
 {
-    private readonly Clients _clients;
+    private readonly IHttpClients _clients;
 
     public DepositTests()
     {
-        _clients = new Clients(HttpClientHelper.Client);
+        _clients = new HttpClients(HttpClientHelper.Client);
     }
 
     [Theory]

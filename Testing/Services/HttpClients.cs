@@ -2,11 +2,11 @@
 
 namespace Services
 {
-    public class Clients
+    public class HttpClients : IHttpClients
     {
         private readonly HttpClient _httpClient;
 
-        public Clients(HttpClient httpClient)
+        public HttpClients(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
